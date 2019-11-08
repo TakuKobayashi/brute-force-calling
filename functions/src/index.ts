@@ -32,7 +32,22 @@ export const callPhone = region("asia-northeast1").https.onRequest((request: Req
     url: 'http://demo.twilio.com/docs/voice.xml',
     to: '+818055146460',
     from: '+17164076874',
-//    from: functionConfig.phone_number.jp_voice,
+    timeout: 60,
+    statusCallback: 'https://asia-northeast1-brute-force-calling.cloudfunctions.net/statusWebhook',
+    statusCallbackMethod: "POST",
+    statusCallbackEvent: ["ringing", "answered", "completed"]
+    //    from: functionConfig.phone_number.jp_voice,
   }).then((call: any) => console.log(call));
   response.send("Hello from Firebase!");
 });
+
+export const statusWebhook = region("asia-northeast1").https.onRequest((request: Request, response: Response) => {
+  if (request.method !== 'POST') {
+    response.send('This is not post request')
+  }
+  console.log(request.body)
+  console.log(request)
+  response.send(request.body.text)
+});
+
+
