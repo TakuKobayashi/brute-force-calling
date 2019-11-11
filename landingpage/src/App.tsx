@@ -8,7 +8,7 @@ const App: React.FC = () => {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          電話をかけてみてね!!
+          この番号に電話をかけてみてね!!
         </p>
         <a
           className="App-link"
