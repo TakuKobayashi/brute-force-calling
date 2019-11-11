@@ -50,4 +50,13 @@ export const statusWebhook = region("asia-northeast1").https.onRequest((request:
   response.send(request.body.text)
 });
 
+export const voiceWebhook = region("asia-northeast1").https.onRequest((request: Request, response: Response) => {
+  if (request.method !== 'POST') {
+    response.send('This is not post request')
+  }
+  console.log(request.body)
+  console.log(request)
+  response.send(request.body.text)
+});
+
 
