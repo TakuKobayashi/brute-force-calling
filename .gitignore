@@ -205,3 +205,10 @@ jspm_packages
 .webpack
 
 # End of https://www.gitignore.io/api/node,webstorm
+
+# Logs
+logs
+firebase-debug.log*
+
+# Firebase cache
+.firebase/
