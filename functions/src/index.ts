@@ -60,7 +60,7 @@ export const voiceWebhook = region("asia-northeast1").https.onRequest((request: 
   console.log(request.body)
 
   const gather = twiml.gather({
-    action: '/gatherWebhook'
+    action: 'https://asia-northeast1-brute-force-calling.cloudfunctions.net/gatherWebhook'
   });
   gather.say('ブルートフォースコーリングをお使いいただきありがとうございます!!呼び出したい相手の電話番号を入力してください!!');
   response.type('text/xml');
