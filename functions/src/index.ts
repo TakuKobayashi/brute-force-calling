@@ -1,4 +1,5 @@
 import {region, Request, Response, config} from "firebase-functions";
+const VoiceResponse = require('twilio').twiml.VoiceResponse;
 
 /*
 const functionConfig = config();
@@ -46,17 +47,49 @@ export const statusWebhook = region("asia-northeast1").https.onRequest((request:
     response.send('This is not post request')
   }
   console.log(request.body)
-  console.log(request)
   response.send(request.body.text)
 });
 
 export const voiceWebhook = region("asia-northeast1").https.onRequest((request: Request, response: Response) => {
+  const twiml = new VoiceResponse();
   if (request.method !== 'POST') {
-    response.send('This is not post request')
+    twiml.say('そのリクエストは受け付けていません');
+    response.send(twiml.toString());
+    return;
   }
   console.log(request.body)
-  console.log(request)
-  response.send(request.body.text)
+
+  const gather = twiml.gather({
+    numDigits: 11,
+    action: '/gather'
+  });
+  gather.say('ブルートフォースコーリングをお使いいただきありがとうございます!!呼び出したい相手の電話番号を入力してください!!');
+  response.type('text/xml');
+  response.send(twiml.toString());
 });
 
+
+export const gatherWebhook = region("asia-northeast1").https.onRequest((request: Request, response: Response) => {
+  const twiml = new VoiceResponse();
+  if (request.method !== 'POST') {
+    twiml.say('そのリクエストは受け付けていません');
+    response.send(twiml.toString());
+    return;
+  }
+  console.log(request.body)
+
+  if (request.body.Digits) {
+    if(request.body.Digits === '#'){
+      twiml.say('それではこれから電話をかけます!!');
+    }else{
+      // 記録していく
+    }
+  } else {
+    twiml.redirect('/voice');
+  }
+
+  // Render the response as XML in reply to the webhook request
+  response.type('text/xml');
+  response.send(twiml.toString());
+});
 
