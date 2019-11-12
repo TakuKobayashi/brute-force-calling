@@ -53,7 +53,10 @@ export const statusWebhook = region("asia-northeast1").https.onRequest((request:
 export const voiceWebhook = region("asia-northeast1").https.onRequest((request: Request, response: Response) => {
   const twiml = new VoiceResponse();
   if (request.method !== 'POST') {
-    twiml.say('そのリクエストは受け付けていません');
+    twiml.say({
+      language: "ja-JP",
+      voice: 'woman',
+    }, 'そのリクエストは受け付けていません');
     response.send(twiml.toString());
     return;
   }
@@ -62,7 +65,10 @@ export const voiceWebhook = region("asia-northeast1").https.onRequest((request: 
   const gather = twiml.gather({
     action: 'https://asia-northeast1-brute-force-calling.cloudfunctions.net/gatherWebhook'
   });
-  gather.say('ブルートフォースコーリングをお使いいただきありがとうございます!!呼び出したい相手の電話番号を入力してください!!');
+  gather.say({
+    language: "ja-JP",
+    voice: 'woman',
+  }, 'ブルートフォースコーリングをお使いいただきありがとうございます!!呼び出したい相手の電話番号を入力してください!!');
   response.type('text/xml');
   response.send(twiml.toString());
 });
@@ -71,7 +77,10 @@ export const voiceWebhook = region("asia-northeast1").https.onRequest((request: 
 export const gatherWebhook = region("asia-northeast1").https.onRequest((request: Request, response: Response) => {
   const twiml = new VoiceResponse();
   if (request.method !== 'POST') {
-    twiml.say('そのリクエストは受け付けていません');
+    twiml.say({
+      language: "ja-JP",
+      voice: 'woman',
+    },'そのリクエストは受け付けていません');
     response.send(twiml.toString());
     return;
   }
@@ -79,7 +88,10 @@ export const gatherWebhook = region("asia-northeast1").https.onRequest((request:
 
   if (request.body.Digits) {
     if(request.body.Digits === '#'){
-      twiml.say('それではこれから電話をかけます!!');
+      twiml.say({
+        language: "ja-JP",
+        voice: 'woman',
+      }, 'それではこれから電話をかけます!!');
     }else{
       // 記録していく
     }
