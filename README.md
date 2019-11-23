@@ -19,28 +19,7 @@ BruteForceCallingに電話を番号を登録しておくと
 
 #### 環境変数の設定
 
-firebase functions:configを使用して環境変数を設定します。例えば以下のように設定します。
-
-```sh
-firebase functions:config:set someservice.key="THE API KEY" someservice.id="THE CLIENT ID"
-```
-
-登録されている環境変数の値をコマンドラインから確認するには
-
-```sh
-firebase functions:config:get
-```
-
-とすると確認できます。今回の場合、
-
-```json
-{
-  "someservice": {
-    "key":"THE API KEY",
-    "id":"THE CLIENT ID"
-  }
-}
-```
+`dotenv` 
 
 このように入力されているのが確認できます。
 なお、大文字のkeyを登録することはできません。

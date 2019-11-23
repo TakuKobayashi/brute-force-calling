@@ -28,13 +28,27 @@ jobs:
         working-directory: ./functions
         run: |
           yarn run build
+      - name: Register .env
+        working-directory: ./functions
+        env:
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_RECEIVE_VOICE_NUMBER: ${{ secrets.TWILIO_RECEIVE_VOICE_NUMBER }}
+          TWILIO_SEND_MESSAGE_NUMBER: ${{ secrets.TWILIO_SEND_MESSAGE_NUMBER }}
+          SAMPLE_PHONE_NUMBER: ${{ secrets.SAMPLE_PHONE_NUMBER }}
+        run: |
+          echo "TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}" >> ./.env
+          echo "TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}" >> ./.env
+          echo "TWILIO_RECEIVE_VOICE_NUMBER=${TWILIO_RECEIVE_VOICE_NUMBER}" >> ./.env
+          echo "TWILIO_SEND_MESSAGE_NUMBER=${TWILIO_SEND_MESSAGE_NUMBER}" >> ./.env
+          echo "SAMPLE_PHONE_NUMBER=${SAMPLE_PHONE_NUMBER}" >> ./.env
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          PROJECT_PATH: ./
+          PROJECT_PATH: ./functions
       - name: Archive Production Artifact
         uses: actions/upload-artifact@master
         with:
