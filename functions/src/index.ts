@@ -1,12 +1,10 @@
-import { region, config } from 'firebase-functions';
+import { region } from 'firebase-functions';
 import * as express from 'express';
-import * as admin from 'firebase-admin';
 
 import { twilioWebhookRouter } from './api/routes/twilio-webhook';
 
 require('dotenv').config();
 
-admin.initializeApp(config().firebase);
 //const firestore = admin.firestore();
 //const storage = admin.storage();
 const app = express();
