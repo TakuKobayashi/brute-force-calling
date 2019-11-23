@@ -1,4 +1,4 @@
-import { region, Request, Response, config } from 'firebase-functions';
+import { region, config } from 'firebase-functions';
 import * as express from 'express';
 import * as admin from 'firebase-admin';
 
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
   res.json({ hello: 'world' });
 });
 
-export const sendMessage = region('asia-northeast1').https.onRequest((request: Request, response: Response) => {
+app.get('/sendMessage', async (req, res) => {
   // tslint:disable-next-line:no-shadowed-variable
   const sendMessage = 'Hello from Node';
   client.messages
@@ -30,10 +30,10 @@ export const sendMessage = region('asia-northeast1').https.onRequest((request: R
       //    from: functionConfig.phone_number.us_sms,
     })
     .then((message: any) => console.log(message));
-  response.send(sendMessage);
+  res.send(sendMessage);
 });
 
-export const callPhone = region('asia-northeast1').https.onRequest((request: Request, response: Response) => {
+app.get('/callPhone', async (req, res) => {
   client.calls
     .create({
       url: 'http://demo.twilio.com/docs/voice.xml',
@@ -46,7 +46,7 @@ export const callPhone = region('asia-northeast1').https.onRequest((request: Req
       //    from: functionConfig.phone_number.jp_voice,
     })
     .then((call: any) => console.log(call));
-  response.send('Hello from Firebase!');
+  res.send('Hello from Firebase!');
 });
 
 export const api = region('asia-northeast1').https.onRequest(app);
