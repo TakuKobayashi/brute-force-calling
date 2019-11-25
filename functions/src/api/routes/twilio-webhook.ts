@@ -1,9 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import * as admin from 'firebase-admin';
 import { TwilioVoice, TwilioVoiceState, TwilioGather } from '../../libs/interfaces/twilio-voice';
-import { config } from 'firebase-functions';
 
-admin.initializeApp(config().firebase);
 const firestore = admin.firestore();
 
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
@@ -38,7 +36,7 @@ twilioWebhookRouter.post('/voice', async (req: Request, res: Response, next: Nex
 });
 
 twilioWebhookRouter.post('/status', (req: Request, res: Response, next: NextFunction) => {
-  console.log("Status");
+  console.log('Status');
   console.log(JSON.stringify(req.body));
   const voiceState: TwilioVoiceState = req.body;
   res.send(voiceState);
@@ -49,20 +47,23 @@ twilioWebhookRouter.post('/gather', (req: Request, res: Response, next: NextFunc
   const gather: TwilioGather = req.body;
   const twiml = new VoiceResponse();
   if (gather.Digits) {
-    let phoneNumber = "+81";
-    if(gather.Digits[0] === '0'){
+    let phoneNumber = '+81';
+    if (gather.Digits[0] === '0') {
       phoneNumber += gather.Digits.substr(1);
     }
-    twiml.dial({
-      callerId: process.env.TWILIO_RECEIVE_VOICE_NUMBER,
-      action: req.baseUrl + '/dial'
-    }, phoneNumber);
+    twiml.dial(
+      {
+        callerId: process.env.TWILIO_RECEIVE_VOICE_NUMBER,
+        action: req.baseUrl + '/dial',
+      },
+      phoneNumber,
+    );
     twiml.say(
       {
         language: 'ja-JP',
         voice: 'woman',
       },
-        gather.Digits + 'にこれから電話をかけます!!',
+      gather.Digits + 'にこれから電話をかけます!!',
     );
   } else {
     twiml.redirect(req.baseUrl + '/voice');
@@ -74,9 +75,9 @@ twilioWebhookRouter.post('/gather', (req: Request, res: Response, next: NextFunc
 });
 
 twilioWebhookRouter.post('/dial', (req: Request, res: Response, next: NextFunction) => {
-  console.log("Dial");
+  console.log('Dial');
   console.log(JSON.stringify(req.body));
   res.send(req.body);
-})
+});
 
 export { twilioWebhookRouter };

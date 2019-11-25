@@ -1,17 +1,18 @@
-import { region } from 'firebase-functions';
+import { config, region } from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import * as express from 'express';
 
 import { twilioWebhookRouter } from './api/routes/twilio-webhook';
+import { twilioRoutineRouter } from './api/routes/twilio-routine';
 
 require('dotenv').config();
-
-//const firestore = admin.firestore();
-//const storage = admin.storage();
+admin.initializeApp(config().firebase);
 
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const app = express();
 
 app.use('/twilio/webhook', twilioWebhookRouter);
+app.use('/twilio/routine', twilioRoutineRouter);
 
 const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
@@ -50,20 +51,23 @@ app.get('/callPhone', async (req, res) => {
 });
 
 app.get('/callDial', async (req, res) => {
-    const twiml = new VoiceResponse();
-    twiml.dial({
-        action: '/brute-force-calling/asia-northeast1/api/twilio/webhook/dial'
-    }, process.env.SAMPLE_PHONE_NUMBER);
-    twiml.say(
-        {
-            language: 'ja-JP',
-            voice: 'woman',
-        },
-        'testtest',
-    );
-    // Render the response as XML in reply to the webhook request
-    res.type('text/xml');
-    res.send(twiml.toString());
+  const twiml = new VoiceResponse();
+  twiml.dial(
+    {
+      action: '/brute-force-calling/asia-northeast1/api/twilio/webhook/dial',
+    },
+    process.env.SAMPLE_PHONE_NUMBER,
+  );
+  twiml.say(
+    {
+      language: 'ja-JP',
+      voice: 'woman',
+    },
+    'testtest',
+  );
+  // Render the response as XML in reply to the webhook request
+  res.type('text/xml');
+  res.send(twiml.toString());
 });
 
 export const api = region('asia-northeast1').https.onRequest(app);
