@@ -38,6 +38,7 @@ twilioWebhookRouter.post('/voice', async (req: Request, res: Response, next: Nex
 });
 
 twilioWebhookRouter.post('/status', (req: Request, res: Response, next: NextFunction) => {
+  console.log("Status");
   console.log(JSON.stringify(req.body));
   const voiceState: TwilioVoiceState = req.body;
   res.send(voiceState);
@@ -52,7 +53,10 @@ twilioWebhookRouter.post('/gather', (req: Request, res: Response, next: NextFunc
     if(gather.Digits[0] === '0'){
       phoneNumber += gather.Digits.substr(1);
     }
-    twiml.dial(null, phoneNumber);
+    twiml.dial({
+      callerId: process.env.TWILIO_RECEIVE_VOICE_NUMBER,
+      action: req.baseUrl + '/dial'
+    }, phoneNumber);
     twiml.say(
       {
         language: 'ja-JP',
@@ -68,5 +72,11 @@ twilioWebhookRouter.post('/gather', (req: Request, res: Response, next: NextFunc
   res.type('text/xml');
   res.send(twiml.toString());
 });
+
+twilioWebhookRouter.post('/dial', (req: Request, res: Response, next: NextFunction) => {
+  console.log("Dial");
+  console.log(JSON.stringify(req.body));
+  res.send(req.body);
+})
 
 export { twilioWebhookRouter };

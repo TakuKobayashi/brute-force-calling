@@ -7,6 +7,8 @@ require('dotenv').config();
 
 //const firestore = admin.firestore();
 //const storage = admin.storage();
+
+const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const app = express();
 
 app.use('/twilio/webhook', twilioWebhookRouter);
@@ -38,13 +40,30 @@ app.get('/callPhone', async (req, res) => {
       to: process.env.SAMPLE_PHONE_NUMBER,
       from: process.env.TWILIO_RECEIVE_VOICE_NUMBER,
       timeout: 60,
-      statusCallback: 'https://asia-northeast1-brute-force-calling.cloudfunctions.net/statusWebhook',
+      statusCallback: '/brute-force-calling/asia-northeast1/api/twilio/webhook/status',
       statusCallbackMethod: 'POST',
       statusCallbackEvent: ['ringing', 'answered', 'completed'],
       //    from: functionConfig.phone_number.jp_voice,
     })
     .then((call: any) => console.log(call));
   res.send('Hello from Firebase!');
+});
+
+app.get('/callDial', async (req, res) => {
+    const twiml = new VoiceResponse();
+    twiml.dial({
+        action: '/brute-force-calling/asia-northeast1/api/twilio/webhook/dial'
+    }, process.env.SAMPLE_PHONE_NUMBER);
+    twiml.say(
+        {
+            language: 'ja-JP',
+            voice: 'woman',
+        },
+        'testtest',
+    );
+    // Render the response as XML in reply to the webhook request
+    res.type('text/xml');
+    res.send(twiml.toString());
 });
 
 export const api = region('asia-northeast1').https.onRequest(app);
